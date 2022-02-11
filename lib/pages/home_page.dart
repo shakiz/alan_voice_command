@@ -15,12 +15,15 @@ class _HomePageState extends State<HomePage> {
     /// Init Alan Button with project key from Alan Studio
     AlanVoice.addButton(
         "502ebcc9f884646444d4ab00d0618b172e956eca572e1d8b807a3e2338fdd0dc/stage",
-        buttonAlign: AlanVoice.BUTTON_ALIGN_LEFT);
+        buttonAlign: AlanVoice.BUTTON_ALIGN_RIGHT);
 
     /// Handle commands from Alan Studio
     AlanVoice.onCommand.add((command) {
-      debugPrint("got new command ${command.toString()}");
+      handleCommand(command.data["data"]);
+      print("got new command ${command.toString()}");
     });
+    /// Registering the event listener
+    AlanVoice.onEvent.add((event) => _handleEvent(event.data));
     super.initState();
   }
 
@@ -41,9 +44,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {},
-        ),
         body: body(),
       ),
     );
@@ -62,5 +62,30 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  handleCommand(Map<String, dynamic> command){
+    switch(command["command"]){
+      default:
+        print("Done");
+        break;
+    }
+  }
+
+  /// Handling events
+  void _handleEvent(Map<String, dynamic> event) {
+    switch (event["name"]) {
+      case "recognized":
+        debugPrint("Interim results: ${event["text"]}");
+        break;
+      case "parsed":
+        debugPrint("Final result: ${event["text"]}");
+        break;
+      case "text":
+        debugPrint("Alan response: ${event["text"]}");
+        break;
+      default:
+        debugPrint("Unknown event");
+    }
   }
 }
